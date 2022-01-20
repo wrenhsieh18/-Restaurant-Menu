@@ -1,43 +1,158 @@
 package com.company;
 
+import javax.swing.table.TableCellEditor;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class Menu {
-    private String resturantName;
-    private String meal; //breakfast, lunch, dinner
-    private String update;
-    private ArrayList<MenuItem> menuList = new ArrayList<>();
+    private final String resturantName;
+    private Scanner input = new Scanner(System.in);
+    private HashMap<String, ArrayList<MenuItem>> menuList = new HashMap<>();
 
-    public Menu(String resName, String aMeal, String aUpdate) {
+    //private ArrayList<MenuItem> menuList = new ArrayList<>();
+
+    public Menu(String resName) {
         resturantName = resName;
-        meal = aMeal;
-        update = aUpdate;
+        setMenuList();
     }
 
-    public Menu(String resName, String aMeal, String aUpdate, ArrayList<MenuItem> aMenuList) {
-        this(resName, aMeal, aUpdate);
-        menuList = aMenuList;
+    @Override
+    public String toString() {
+        String printOut = "\n*****\n" + resturantName  + " menu:\n";
+
+        for (Map.Entry<String, ArrayList<MenuItem>> each : getMenuList().entrySet() ) {
+            if (each.getValue().size() > 0) {
+                printOut += each.getKey() + "\n";
+                for (MenuItem eachItem : each.getValue()) {
+                    printOut += eachItem;
+                }
+            }
+
+        }
+        return printOut + "*****\n";
     }
 
-    public void setMeal(String aMeal) { meal = aMeal; }
+    public String findSpecificItem(String aTarget) {
+        String printOut = "";
 
-    public void setUpdate(String aUpdate) { update = aUpdate; }
+        for (Map.Entry<String, ArrayList<MenuItem>> each : getMenuList().entrySet() ) {
+            if (each.getValue().contains(new MenuItem(aTarget))) {
+                printOut += each.getKey() + "\n";
+                for (MenuItem eachItem : each.getValue()) {
+                    printOut += eachItem;
+                }
+            }
+        }
+        return printOut;
+    }
 
-    public void addItems(MenuItem aItem) {
-        if (!menuList.contains(aItem.getName())) {
-            menuList.add(aItem);
+    public String findSpecificCategory(String aCategory) {
+        String printOut = aCategory + "\n";
+        for (MenuItem eachItem : menuList.get(aCategory)) {
+            printOut += eachItem;
+        }
+        return printOut;
+    }
+
+
+    public void addItems() {
+        Integer categoryChoosen;
+        String categoryInput = "Other";
+        do {
+            System.out.println("Which category are you adding a new item to?\n1 - Appetizer\n2 - Main Course\n3 - Dessert\n4 - Drink");
+            categoryChoosen = input.nextInt();
+            input.nextLine();
+            if (categoryChoosen == 1) {
+                categoryInput = "Appetizer";
+            } else if (categoryChoosen == 2){
+                categoryInput = "Main Course";
+            } else if (categoryChoosen == 3){
+                categoryInput = "Dessert";
+            } else if (categoryChoosen == 4){
+                categoryInput = "Drink";
+            } else {
+                System.out.println("You made an invalid action.");
+            }
+        } while (categoryChoosen != 1 && categoryChoosen != 2 && categoryChoosen != 3 && categoryChoosen != 4 );
+
+
+        System.out.print("Item name: ");
+        String nameInput = input.nextLine();
+
+        if (!menuList.get(categoryInput).contains(new MenuItem(nameInput))) {
+            System.out.print("Price: ");
+            Integer priceInput = input.nextInt();
+            input.nextLine();
+
+            System.out.print("Description: ");
+            String inStockInput = input.nextLine();
+
+            MenuItem newItem = new MenuItem(categoryInput, nameInput, priceInput, inStockInput);
+
+            menuList.get(categoryInput).add(newItem);
             System.out.println("Item added!");
         } else {
             System.out.println("The item is already in the menu.");
         }
+    }
 
+    public void removeItem() {
+        Integer categoryChoosen;
+        String categoryInput = "Other";
+        do {
+            System.out.print("Which category you would like to remove an item from?");
+            String prompt = "";
+            if (menuList.get("Appetizer").size() > 0) {
+                prompt += "\n1 - Appetizer";
+            }
+            if (menuList.get("Main Course").size() > 0) {
+                prompt += "\n2 - Main Course";
+            }
+            if (menuList.get("Dessert").size() > 0) {
+                prompt += "\n3 - Dessert";
+            }
+            if (menuList.get("Drink").size() > 0) {
+                prompt += "\n4 - Drink";
+            }
+            System.out.println(prompt);
+
+            categoryChoosen = input.nextInt();
+            input.nextLine();
+            if (categoryChoosen == 1 && menuList.get("Appetizer").size() > 0) {
+                categoryInput = "Appetizer";
+            } else if (categoryChoosen == 2 && menuList.get("Main Course").size() > 0){
+                categoryInput = "Main Course";
+            } else if (categoryChoosen == 3 && menuList.get("Dessert").size() > 0){
+                categoryInput = "Dessert";
+            } else if (categoryChoosen == 4 && menuList.get("Drink").size() > 0){
+                categoryInput = "Drink";
+            } else {
+                System.out.println("You made an invalid action, or the category has no item.");
+            }
+        } while (categoryChoosen != 1 && categoryChoosen != 2 && categoryChoosen != 3 && categoryChoosen != 4 );
+
+        System.out.println("Which item you would like to remove? ");
+        for (MenuItem eachItem : menuList.get(categoryInput)) {
+            System.out.println(eachItem);
+        }
+        String targetItemInput = input.nextLine();
+
+        MenuItem targetItem = new MenuItem(targetItemInput);
+        menuList.get(categoryInput).remove(targetItem);
+    }
+
+    public void setMenuList() {
+        menuList.put("Appetizer", new ArrayList<MenuItem>());
+        menuList.put("Main Course", new ArrayList<MenuItem>());
+        menuList.put("Dessert", new ArrayList<MenuItem>());
+        menuList.put("Drink", new ArrayList<MenuItem>());
+        menuList.put("Other", new ArrayList<MenuItem>());
     }
 
     public String getResturantName() {return resturantName; }
 
-    public String getMeal() { return meal; }
-
-    public String getUpdate() { return update; }
-
-    public ArrayList<MenuItem> getItems() { return menuList; }
+    public HashMap<String, ArrayList<MenuItem>> getMenuList() { return menuList; }
 }
