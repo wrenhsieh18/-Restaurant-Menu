@@ -39,7 +39,8 @@ public class MenuItem {
 
     @Override
     public String toString() {
-        return getName() + "\t----------\t$" + getPrice() + " ("+getDescription()+") (updated on " + getUpdate() + ")\n";
+        //return getName() + "\t----------\t$" + getPrice() + " ("+getDescription()+") (updated on " + getUpdate() + ")\n";
+        return String.format("%s \t----------\t %d (%s) (updated on %s)\n", getName(), getPrice(), getDescription(), getUpdate());
     }
 
     public void setName(String aName) {

@@ -1,27 +1,24 @@
 package com.company;
 
-import javax.swing.table.TableCellEditor;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class Menu {
-    private final String resturantName;
-    private Scanner input = new Scanner(System.in);
+    private final Scanner input = new Scanner(System.in);
+
+    private final String restaurantName;
     private HashMap<String, ArrayList<MenuItem>> menuList = new HashMap<>();
 
-    //private ArrayList<MenuItem> menuList = new ArrayList<>();
-
     public Menu(String resName) {
-        resturantName = resName;
+        restaurantName = resName;
         setMenuList();
     }
 
     @Override
     public String toString() {
-        String printOut = "\n*****\n" + resturantName  + " menu:\n";
+        String printOut = String.format("\n*****\n%s menu:\n", restaurantName);
 
         for (Map.Entry<String, ArrayList<MenuItem>> each : getMenuList().entrySet() ) {
             if (each.getValue().size() > 0) {
@@ -42,7 +39,9 @@ public class Menu {
             if (each.getValue().contains(new MenuItem(aTarget))) {
                 printOut += each.getKey() + "\n";
                 for (MenuItem eachItem : each.getValue()) {
-                    printOut += eachItem;
+                    if (eachItem.getName().equals(aTarget)) {
+                        printOut += eachItem;
+                    }
                 }
             }
         }
@@ -136,7 +135,7 @@ public class Menu {
 
         System.out.println("Which item you would like to remove? ");
         for (MenuItem eachItem : menuList.get(categoryInput)) {
-            System.out.println(eachItem);
+            System.out.print(eachItem + "\n");
         }
         String targetItemInput = input.nextLine();
 
@@ -144,7 +143,7 @@ public class Menu {
         menuList.get(categoryInput).remove(targetItem);
     }
 
-    public void setMenuList() {
+    private void setMenuList() {
         menuList.put("Appetizer", new ArrayList<MenuItem>());
         menuList.put("Main Course", new ArrayList<MenuItem>());
         menuList.put("Dessert", new ArrayList<MenuItem>());
@@ -152,7 +151,7 @@ public class Menu {
         menuList.put("Other", new ArrayList<MenuItem>());
     }
 
-    public String getResturantName() {return resturantName; }
+    public String getResturantName() {return restaurantName; }
 
     public HashMap<String, ArrayList<MenuItem>> getMenuList() { return menuList; }
 }
